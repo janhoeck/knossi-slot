@@ -1,22 +1,36 @@
-import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
+import React, {createContext, useContext, useState} from 'react';
 
+export type AccountContextType = ReturnType<typeof useStore>;
 // Create the context
-const AccountContext = createContext({} as any);
+const AccountContext = createContext<AccountContextType>({} as any);
 
 // Create the context provider
-const AccountContextProvider = (props: PropsWithChildren<unknown>) =>{
-    const { children } = props;
-    const [money, setMoney] = useState<number>(0.0);
+const useStore = (initialMoney = 0.0) => {
+    const [money, setMoney] = useState<number>(initialMoney);
 
+    const increaseMoney = (amount: number) => setMoney((money) => money + amount);
+    const decreaseMoney = (amount: number) => setMoney((money) => money - amount);
+
+    return {
+        money,
+        setMoney,
+        increaseMoney,
+        decreaseMoney
+    }
+};
+
+export interface SlotContextProviderProps {
+    initialMoney?: number;
+}
+
+export const AccountContextProvider: React.FunctionComponent<SlotContextProviderProps> = ({ children, initialMoney }) => {
+    const store = useStore(initialMoney);
     return (
-        <AccountContext.Provider value={{ money: money, setMoney: setMoney }}>
+        <AccountContext.Provider value={store}>
             {children}
         </AccountContext.Provider>
     );
-};
+}
 
 // Create the hook to access the context
-const useAccountContext = () => useContext(AccountContext);
-
-// export everything
-export { AccountContext, AccountContextProvider, createContext, useAccountContext };
+export const useAccountContext = () => useContext<AccountContextType>(AccountContext);

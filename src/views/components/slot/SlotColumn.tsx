@@ -1,11 +1,10 @@
 import classNames from 'clsx';
-import React, { forwardRef, HTMLAttributes, Ref, useCallback, useImperativeHandle, useRef } from 'react';
-import { createUseStyles } from 'react-jss';
-import { SpinResult, useSlotContext } from '../../tools/SlotContext';
-import { SlotSymbol } from '../../tools/SlotSymbols';
-import { SlotItem } from './SlotItem';
-
-const spinSound = require('../../assets/spin-click-sound.mp3');
+import React, {forwardRef, HTMLAttributes, Ref, RefObject, useImperativeHandle, useRef} from 'react';
+import {createUseStyles} from 'react-jss';
+import {ExtendedSlotSymbol} from '../../tools/SlotSymbols';
+import {SlotItem} from './SlotItem';
+// @ts-ignore
+import spinSound from '../../assets/spin-click-sound.mp3';
 
 // noinspection JSSuspiciousNameCombination
 const useStyles = createUseStyles({
@@ -30,11 +29,13 @@ export interface SlotColumnProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
      * The index of the column
      */
     index: number;
-    slotSymbols: SlotSymbol[];
+    slotSymbols: ExtendedSlotSymbol[];
+    rowsAmount: number;
 }
 
 export interface SlotColumnRef {
-    spin: (spinTime: number) => Promise<SpinResult[]>;
+    spin: (spinTime: number, slotSymbols: ExtendedSlotSymbol[]) => Promise<ExtendedSlotSymbol[]>;
+    ref: RefObject<HTMLDivElement>;
 }
 
 const START_POSITION = 0;
@@ -50,35 +51,31 @@ const START_POSITION = 0;
  * @param visibleSlotItemAmount
  *  The amount of visible slot items in a column
  */
-const calculateVisibleSymbols = (symbols: SlotSymbol[], symbolHeight: number, position: number, visibleSlotItemAmount: number): SpinResult[] => {
+const calculateVisibleSymbols = (symbols: ExtendedSlotSymbol[], symbolHeight: number, position: number, visibleSlotItemAmount: number): ExtendedSlotSymbol[] => {
     // How often fits the symbolHeight into the position
     const offset = -(position) / symbolHeight;
     return Array.from({length: visibleSlotItemAmount}).map((_, index) => {
         const symbolsIndex = symbols.length - offset - (index + 1);
-        return {
-            symbol: symbols[symbolsIndex],
-            index: symbolsIndex,
-        };
+        return symbols[symbolsIndex];
     }).reverse();
 };
 
 const audio = new Audio(spinSound);
 
 export const SlotColumn = forwardRef((props: SlotColumnProps, ref: Ref<SlotColumnRef>) => {
-    const {className, style, width, index, slotSymbols, ...restProps} = props;
+    const {className, style, width, index, slotSymbols, rowsAmount, ...restProps} = props;
     const classes = useStyles({...props, width: width});
-    const {rows} = useSlotContext();
 
     const rootRef = useRef<HTMLDivElement>(null);
 
-    const spin = useCallback((spinTime: number): Promise<SpinResult[]> => {
+    const spin = (spinTime: number, slotSymbols: ExtendedSlotSymbol[]): Promise<ExtendedSlotSymbol[]> => {
         const {current} = rootRef;
-        return new Promise<SpinResult[]>((resolve) => {
+        return new Promise<ExtendedSlotSymbol[]>((resolve) => {
             let internalPosition = START_POSITION;
 
             const intervalId = setInterval(() => {
                 // Check if the limit of the column got reached. If yes, reset it to the start position
-                if (internalPosition <= -(width * (slotSymbols.length - rows))) {
+                if (internalPosition <= -(width * (slotSymbols.length - rowsAmount))) {
                     internalPosition = START_POSITION;
                 }
 
@@ -99,14 +96,15 @@ export const SlotColumn = forwardRef((props: SlotColumnProps, ref: Ref<SlotColum
                 // noinspection JSIgnoredPromiseFromCall
                 audio.play();
 
-                const spinResult: SpinResult[] = calculateVisibleSymbols(slotSymbols, width, internalPosition, rows);
+                const spinResult = calculateVisibleSymbols(slotSymbols, width, internalPosition, rowsAmount);
                 resolve(spinResult);
             }, spinTime);
         });
-    }, [width, slotSymbols, rows, rootRef]);
+    };
 
     useImperativeHandle(ref, () => ({
         spin: spin,
+        ref: rootRef
     }));
 
     return (
@@ -121,3 +119,5 @@ export const SlotColumn = forwardRef((props: SlotColumnProps, ref: Ref<SlotColum
         </div>
     );
 });
+
+SlotColumn.displayName = 'SlotColumn';

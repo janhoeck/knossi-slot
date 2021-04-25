@@ -21,7 +21,7 @@ const useStyles = createUseStyles<Theme>((theme) => ({
     container: {
         textAlign: 'center',
         padding: theme.spacing,
-        border: '2px solid gold',
+        border: `2px solid ${theme.palette.common.border}`,
         borderRadius: 4,
         background: theme.palette.primary.dark,
         color: theme.palette.common.white,
@@ -50,7 +50,7 @@ export const MoneyStakeAction = (props: MoneyStakeActionProps) => {
                 <DecreaseIcon className={classes.icon}/>
             </RoundButton>
             <div className={classes.container}>
-                {moneyStake} €
+                {moneyStake.toFixed(2)} €
             </div>
             <RoundButton className={classes.button} disabled={increaseDisabled} onClick={increase}>
                 <IncreaseIcon className={classes.icon}/>

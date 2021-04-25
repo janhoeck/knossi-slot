@@ -1,16 +1,19 @@
-import { getRandomSymbol, SlotSymbol } from '../SlotSymbols';
+import {ExtendedSlotSymbol, getRandomSymbol} from '../SlotSymbols';
 
-export const generateSymbols = (rows: number, columns: number): SlotSymbol[][] => {
-    const slotSymbols: SlotSymbol[][] = [];
+export const generateSymbols = (rows: number, columns: number): ExtendedSlotSymbol[][] => {
+    const slotSymbols: ExtendedSlotSymbol[][] = [];
     // We have to add +5 here, because this will be faked rows which won't be displayed to the user
     // But we need this for the scroll effect
-    for(let rowsIndex = 0; rowsIndex < (rows + 5); rowsIndex++) {
-        for(let columnsIndex = 0; columnsIndex < columns; columnsIndex++) {
-            if(!Array.isArray(slotSymbols[columnsIndex])) {
-                slotSymbols[columnsIndex] = [];
+    for(let rowIndex = 0; rowIndex < (rows + 5); rowIndex++) {
+        for(let columnIndex = 0; columnIndex < columns; columnIndex++) {
+            if(!Array.isArray(slotSymbols[columnIndex])) {
+                slotSymbols[columnIndex] = [];
             }
-            slotSymbols[columnsIndex][rowsIndex] = getRandomSymbol();
+
+            const slotSymbol = getRandomSymbol();
+            slotSymbols[columnIndex][rowIndex] = {...slotSymbol, row: rowIndex, column: columnIndex};
         }
     }
+
     return slotSymbols;
 };

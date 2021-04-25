@@ -10,7 +10,7 @@ const useStyles = createUseStyles<Theme>((theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         background: theme.palette.primary.dark,
-        border: '2px solid gold',
+        border: `2px solid ${theme.palette.common.border}`,
         cursor: 'pointer',
         color: theme.palette.common.white,
         '&:focus': {

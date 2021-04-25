@@ -9,7 +9,8 @@ const useStyles = createUseStyles<Theme>((theme) => ({
     root: {
         height: 80,
         width: 80,
-        border: '4px solid gold',
+        border: `4px solid ${theme.palette.common.border}`,
+        zIndex: 2
     },
     icon: {
         fontSize: '1rem'

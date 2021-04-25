@@ -1,10 +1,12 @@
 import classNames from 'clsx';
-import React, { HTMLAttributes, useCallback } from 'react';
-import { createUseStyles } from 'react-jss';
-import { Theme } from '../../../tools/Theme';
-import { useSlotContext } from '../../tools/SlotContext';
-import { MoneyStakeAction } from './MoneyStakeAction';
-import { SpinAction } from './SpinAction';
+import React, {HTMLAttributes, useCallback} from 'react';
+import {createUseStyles} from 'react-jss';
+import {Theme} from '../../../tools/Theme';
+import {useSlotContext} from '../../tools/SlotContext';
+import {MoneyStakeAction} from './MoneyStakeAction';
+import {SpinAction} from './SpinAction';
+import {useAccountContext} from '../../../tools/context/AccountContext';
+import {Balance} from './Balance';
 
 const useStyles = createUseStyles<Theme>((theme) => ({
     root: {
@@ -14,6 +16,7 @@ const useStyles = createUseStyles<Theme>((theme) => ({
         padding: theme.spacing,
         display: 'flex',
         height: 60,
+        justifyContent: 'space-between'
     },
     autoSpinAction: {},
     spinAction: {
@@ -31,16 +34,28 @@ export const SlotActionBar = (props: SlotActionBarProps) => {
     const {className, ...restProps} = props;
     const classes = useStyles(props);
     const {spin, isSpinning, moneyStake, setMoneyStake} = useSlotContext();
+    const {money} = useAccountContext();
 
-    const increaseMoneyStake = useCallback(() => {
-        setMoneyStake(moneyStake + 1);
-    }, [moneyStake, setMoneyStake]);
+    const increaseMoneyStake = () => {
+        setMoneyStake((moneyStake) => {
+            if(moneyStake < 1) {
+                return moneyStake + 0.10;
+            }
+            return moneyStake + 1
+        });
+    };
 
-    const decreaseMoneyStake = useCallback(() => {
-        if (moneyStake > 1) {
-            setMoneyStake(moneyStake - 1);
+    const decreaseMoneyStake = () => {
+        if(moneyStake <= 0.10) {
+            return;
         }
-    }, [moneyStake, setMoneyStake]);
+
+        if (moneyStake > 1) {
+            setMoneyStake((moneyStake) => moneyStake - 1);
+        } else {
+            setMoneyStake((moneyStake) => moneyStake - 0.10);
+        }
+    };
 
     return (
         <div className={classNames(classes.root, className)} {...restProps}>
@@ -48,14 +63,15 @@ export const SlotActionBar = (props: SlotActionBarProps) => {
                 moneyStake={moneyStake}
                 increase={increaseMoneyStake}
                 decrease={decreaseMoneyStake}
-                decreaseDisabled={moneyStake <= 1 || isSpinning}
+                decreaseDisabled={moneyStake <= 0.1 || isSpinning}
                 increaseDisabled={isSpinning}
             />
             <SpinAction
                 className={classes.spinAction}
-                disabled={isSpinning}
+                disabled={isSpinning || money < moneyStake}
                 onClick={spin}
             />
+            <Balance balance={money}/>
         </div>
     );
 };

@@ -3,16 +3,16 @@ export const theme = {
     palette: {
         common: {
             white: '#fff',
-            black: '#000'
+            black: '#000',
+            border: '#d6f2f4'
         },
         primary: {
-            light: '#1976d2',
-            main: '#1565c0',
-            dark: '#0d47a1'
+            light: '#7ae7db',
+            main: '#249ab3',
+            dark: '#0a455d'
         },
         background: {
             default: '',
-
         }
     }
 };
