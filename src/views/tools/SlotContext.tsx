@@ -1,9 +1,8 @@
 import React, {createContext, useCallback, useContext, useRef, useState} from 'react';
 import {SlotRef} from '../components/slot/Slot';
-import { generateSymbols} from './helpers/slotGeneratorHelper';
+import {generateSymbols} from './helpers/slotGeneratorHelper';
 import {ExtendedSlotSymbol} from './SlotSymbols';
-import {checkWin} from './helpers/spinResultAlgorithm';
-import {useAccountContext} from '../../tools/context/AccountContext';
+import {getWinningSymbols} from './helpers/winResultCalculator';
 
 export type SlotContextType = ReturnType<typeof useStore>;
 // Create the context
@@ -22,8 +21,7 @@ const useStore = (rowsAmount = 3, columnsAmount = 5) => {
     const [isAutoSpinMode, setAutoSpinMode] = useState<boolean>(false);
     const [symbolsMap, setSymbolsMap] = useState<ExtendedSlotSymbol[][]>(generateSymbols(rowsAmount, columnsAmount));
     const [lastAmountOfProfit, setLastAmountOfProfit] = useState<number>();
-
-    const { increaseMoney, decreaseMoney } = useAccountContext();
+    const [winningSymbols, setWinningSymbols] = useState<ExtendedSlotSymbol[][]>([]);
 
     const registerSlot = useCallback((slot: SlotRef) => {
         slotRef.current = slot;
@@ -34,8 +32,6 @@ const useStore = (rowsAmount = 3, columnsAmount = 5) => {
 
         const { current } = slotRef;
         if(current) {
-            decreaseMoney(moneyStake);
-
             const generatedSlotSymbols = generateSymbols(rowsAmount, columnsAmount)
             setSymbolsMap(generatedSlotSymbols);
 
@@ -45,31 +41,12 @@ const useStore = (rowsAmount = 3, columnsAmount = 5) => {
             const visibleSlotSymbols = await current.spin(generatedSlotSymbols);
             setSpinning(false);
 
-            const winResult = checkWin(visibleSlotSymbols);
-            // Update the highlight property for the winning rows
-            setSymbolsMap((symbolsMap) => {
-                 const symbolsMapCopy = [...symbolsMap];
-                 symbolsMapCopy.forEach((slotSymbols) => {
-                        slotSymbols.forEach((slotSymbol) => {
-                            const didRowWin = winResult.find((result) => result.row === slotSymbol.row);
-                            if(didRowWin) {
-                                slotSymbol.highlight = true;
-                            }
-                        })
-                 });
-                 return symbolsMapCopy;
-            });
-
-            const amountOfProfit = winResult.reduce((previousValue) => previousValue + (moneyStake * 2), 0);
-            increaseMoney(amountOfProfit);
-
-            if(amountOfProfit > 0) {
-                setLastAmountOfProfit(amountOfProfit);
-            }
+            setWinningSymbols(getWinningSymbols(visibleSlotSymbols, rowsAmount, columnsAmount));
         }
-    }, [decreaseMoney, moneyStake, rowsAmount, columnsAmount, increaseMoney]);
+    }, [rowsAmount, columnsAmount]);
 
     return {
+        winningSymbols,
         lastAmountOfProfit,
         moneyStake,
         setMoneyStake,
