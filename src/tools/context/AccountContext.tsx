@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 export type AccountContextType = ReturnType<typeof useStore>;
 // Create the context
@@ -15,8 +15,8 @@ const useStore = (initialMoney = 0.0) => {
         money,
         setMoney,
         increaseMoney,
-        decreaseMoney
-    }
+        decreaseMoney,
+    };
 };
 
 export interface SlotContextProviderProps {
@@ -25,12 +25,8 @@ export interface SlotContextProviderProps {
 
 export const AccountContextProvider: React.FunctionComponent<SlotContextProviderProps> = ({ children, initialMoney }) => {
     const store = useStore(initialMoney);
-    return (
-        <AccountContext.Provider value={store}>
-            {children}
-        </AccountContext.Provider>
-    );
-}
+    return <AccountContext.Provider value={store}>{children}</AccountContext.Provider>;
+};
 
 // Create the hook to access the context
 export const useAccountContext = () => useContext<AccountContextType>(AccountContext);

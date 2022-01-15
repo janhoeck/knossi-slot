@@ -1,4 +1,4 @@
-import {ExtendedSlotSymbol} from '../SlotSymbols';
+import { ExtendedSlotSymbol } from '../SlotSymbols';
 
 const iterate = (visibleSlotSymbols: ExtendedSlotSymbol[][], callback: (columnIndex: number, rowIndex: number) => void) => {
     for (let columnIndex = 0; columnIndex < visibleSlotSymbols.length; columnIndex++) {
@@ -7,7 +7,7 @@ const iterate = (visibleSlotSymbols: ExtendedSlotSymbol[][], callback: (columnIn
             callback(columnIndex, rowIndex);
         }
     }
-}
+};
 
 /**
  * Checks if all symbols are from the same type
@@ -16,7 +16,7 @@ const iterate = (visibleSlotSymbols: ExtendedSlotSymbol[][], callback: (columnIn
 const checkWin = (symbols: ExtendedSlotSymbol[]): boolean => {
     const firstSymbolValue = symbols[0].value;
     return symbols.every((symbol) => symbol.value === firstSymbolValue);
-}
+};
 
 export const getWinningSymbols = (visibleSlotSymbols: ExtendedSlotSymbol[][], rowsAmount: number, columnAmount: number): ExtendedSlotSymbol[][] => {
     const winningSymbols: ExtendedSlotSymbol[][] = [];
@@ -27,16 +27,16 @@ export const getWinningSymbols = (visibleSlotSymbols: ExtendedSlotSymbol[][], ro
      * - - - - -
      * X X X X X
      */
-    for(let rowIndex = 0; rowIndex < rowsAmount; rowIndex ++) {
+    for (let rowIndex = 0; rowIndex < rowsAmount; rowIndex++) {
         const symbols: ExtendedSlotSymbol[] = [];
-        iterate(visibleSlotSymbols, (columnIndex , _rowIndex) => {
-            if(rowIndex === _rowIndex) {
+        iterate(visibleSlotSymbols, (columnIndex, _rowIndex) => {
+            if (rowIndex === _rowIndex) {
                 symbols.push(visibleSlotSymbols[columnIndex][_rowIndex]);
             }
         });
 
         const isWin = checkWin(symbols);
-        if(isWin) {
+        if (isWin) {
             winningSymbols.push(symbols);
         }
     }
@@ -65,10 +65,9 @@ export const getWinningSymbols = (visibleSlotSymbols: ExtendedSlotSymbol[][], ro
     });
 
     const isWin = checkWin(symbols);
-    if(isWin) {
+    if (isWin) {
         winningSymbols.push(symbols);
     }
 
-    console.log('winningSymbols', winningSymbols);
     return winningSymbols;
-}
+};

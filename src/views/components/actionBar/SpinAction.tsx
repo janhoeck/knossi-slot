@@ -5,17 +5,20 @@ import RoundButton, { RoundButtonProps } from '../../../components/Button/RoundB
 import { Theme } from '../../../tools/Theme';
 import { FaPlay as PlayIcon } from 'react-icons/fa';
 
-const useStyles = createUseStyles<Theme>((theme) => ({
-    root: {
-        height: 80,
-        width: 80,
-        border: `4px solid ${theme.palette.common.border}`,
-        zIndex: 2
-    },
-    icon: {
-        fontSize: '1rem'
-    }
-}), { name: 'SpinAction' });
+const useStyles = createUseStyles<Theme>(
+    (theme) => ({
+        root: {
+            height: 80,
+            width: 80,
+            border: `4px solid ${theme.palette.common.border}`,
+            zIndex: 2,
+        },
+        icon: {
+            fontSize: '1rem',
+        },
+    }),
+    { name: 'SpinAction' }
+);
 
 export interface SpinActionProps extends RoundButtonProps {}
 

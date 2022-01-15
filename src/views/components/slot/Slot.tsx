@@ -1,26 +1,35 @@
 import classNames from 'clsx';
-import React, {forwardRef, HTMLAttributes, Ref, RefObject, useImperativeHandle, useLayoutEffect, useRef, useState,} from 'react';
-import {createUseStyles} from 'react-jss';
-import {Theme} from '../../../tools/Theme';
-import {ExtendedSlotSymbol} from '../../tools/SlotSymbols';
-import {SlotColumn, SlotColumnRef} from './SlotColumn';
+import React, { forwardRef, HTMLAttributes, Ref, RefObject, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import { createUseStyles } from 'react-jss';
+import { Theme } from '../../../tools/Theme';
+import { ExtendedSlotSymbol } from '../../tools/SlotSymbols';
+import { SlotColumn, SlotColumnRef } from './SlotColumn';
+import { WinIndicatorGrid } from '../winIndicatorGrind/WinIndicatorGrid';
 
-const useStyles = createUseStyles<Theme>({
-    root: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        position: 'relative',
-        overflow: 'hidden',
+const useStyles = createUseStyles<Theme>(
+    {
+        root: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            position: 'relative',
+            overflow: 'hidden',
+        },
+        slotColumn: {
+            position: 'absolute',
+        },
+        winIndicatorGrid: {
+            position: 'absolute',
+            zIndex: 1,
+        },
     },
-    slotColumn: {
-        position: 'absolute',
-    },
-}, {name: 'Slot'});
+    { name: 'Slot' }
+);
 
 export interface SlotProps extends HTMLAttributes<HTMLDivElement> {
     rowsAmount: number;
     columnsAmount: number;
     symbolsMap: ExtendedSlotSymbol[][];
+    winningSymbols: ExtendedSlotSymbol[][];
 }
 
 export interface SlotRef {
@@ -29,7 +38,7 @@ export interface SlotRef {
 }
 
 export const Slot = forwardRef((props: SlotProps, ref: Ref<SlotRef>) => {
-    const {className, symbolsMap, rowsAmount, columnsAmount, ...restProps} = props;
+    const { className, symbolsMap, rowsAmount, columnsAmount, winningSymbols, ...restProps } = props;
     const classes = useStyles(props);
 
     const [columnWidth, setColumnWidth] = useState<number>(0);
@@ -49,16 +58,18 @@ export const Slot = forwardRef((props: SlotProps, ref: Ref<SlotRef>) => {
     const spin = (slotSymbols: ExtendedSlotSymbol[][]): Promise<ExtendedSlotSymbol[][]> => {
         return new Promise<ExtendedSlotSymbol[][]>(async (resolve) => {
             if (columnWidth !== 0 && columnRefs.current.length !== 0) {
-                const visibleSymbols = await Promise.all(columnRefs.current.map((columnRef, index) => {
-                    return columnRef.spin(500 + (index * 500), slotSymbols[index]);
-                }));
+                const visibleSymbols = await Promise.all(
+                    columnRefs.current.map((columnRef, index) => {
+                        return columnRef.spin(500 + index * 500, slotSymbols[index]);
+                    })
+                );
                 resolve(visibleSymbols);
             }
         });
     };
 
     useLayoutEffect(() => {
-        const {current} = rootRef;
+        const { current } = rootRef;
         if (current) {
             setColumnWidth(current.getBoundingClientRect().width / columnsAmount);
         }
@@ -66,7 +77,7 @@ export const Slot = forwardRef((props: SlotProps, ref: Ref<SlotRef>) => {
 
     useImperativeHandle(ref, () => ({
         spin: spin,
-        columnRefs: columnRefs
+        columnRefs: columnRefs,
     }));
 
     return (
@@ -78,6 +89,15 @@ export const Slot = forwardRef((props: SlotProps, ref: Ref<SlotRef>) => {
             }}
             {...restProps}
         >
+            {winningSymbols.map((winningSymbols, index) => (
+                <WinIndicatorGrid
+                    key={index}
+                    className={classes.winIndicatorGrid}
+                    columnAmount={columnsAmount}
+                    rowAmount={rowsAmount}
+                    winningSymbols={winningSymbols}
+                />
+            ))}
             {symbolsMap.map((slotSymbols, index) => (
                 <SlotColumn
                     key={index}

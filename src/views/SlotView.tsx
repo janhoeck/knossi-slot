@@ -1,6 +1,6 @@
 import React from 'react';
-import {SlotContextProvider} from './tools/SlotContext';
-import {SlotViewContent, SlotViewContentProps} from './SlotViewContent';
+import { SlotContextProvider } from './tools/SlotContext';
+import { SlotViewContent, SlotViewContentProps } from './SlotViewContent';
 
 export interface SlotViewProps extends SlotViewContentProps {}
 
