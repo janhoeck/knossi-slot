@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/knossi-slot/static/css/main.e0818deb.chunk.css",
+    "main.js": "/knossi-slot/static/js/main.b29b9020.chunk.js",
+    "main.js.map": "/knossi-slot/static/js/main.b29b9020.chunk.js.map",
+    "runtime-main.js": "/knossi-slot/static/js/runtime-main.6db0981e.js",
+    "runtime-main.js.map": "/knossi-slot/static/js/runtime-main.6db0981e.js.map",
+    "static/js/2.98cd708f.chunk.js": "/knossi-slot/static/js/2.98cd708f.chunk.js",
+    "static/js/2.98cd708f.chunk.js.map": "/knossi-slot/static/js/2.98cd708f.chunk.js.map",
+    "index.html": "/knossi-slot/index.html",
+    "static/css/main.e0818deb.chunk.css.map": "/knossi-slot/static/css/main.e0818deb.chunk.css.map",
+    "static/js/2.98cd708f.chunk.js.LICENSE.txt": "/knossi-slot/static/js/2.98cd708f.chunk.js.LICENSE.txt",
+    "static/media/knossi.8439d885.png": "/knossi-slot/static/media/knossi.8439d885.png",
+    "static/media/mannymarc.67aeda60.png": "/knossi-slot/static/media/mannymarc.67aeda60.png",
+    "static/media/sascha.67d054ea.png": "/knossi-slot/static/media/sascha.67d054ea.png",
+    "static/media/sido.9c8b4f75.png": "/knossi-slot/static/media/sido.9c8b4f75.png",
+    "static/media/spin-click-sound.033469a0.mp3": "/knossi-slot/static/media/spin-click-sound.033469a0.mp3"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6db0981e.js",
+    "static/js/2.98cd708f.chunk.js",
+    "static/css/main.e0818deb.chunk.css",
+    "static/js/main.b29b9020.chunk.js"
+  ]
+}
